@@ -252,7 +252,7 @@ function App() {
     <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black py-8 px-4">
       <div className="max-w-3xl mx-auto space-y-8">
         <header className="text-center">
-          <h1 className="text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-600 mb-4 font-sans">{SYMBOLS.wallet} SUI Token Transfer Tool</h1>
+          <h1 className="text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-600 mb-4 font-sans"> SUI Token Transfer Tool</h1>
           <p className="text-gray-400 text-lg">Alat untuk mengirim token SUI ke satu atau beberapa alamat di jaringan SUI.</p>
         </header>
 

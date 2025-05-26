@@ -249,15 +249,15 @@ function App() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gray-900 py-8 px-4">
+    <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black py-8 px-4">
       <div className="max-w-3xl mx-auto space-y-8">
         <header className="text-center">
-          <h1 className="text-4xl font-bold text-blue-400 mb-4">{SYMBOLS.wallet} SUI Token Transfer Tool</h1>
-          <p className="text-gray-400">Alat untuk mengirim token SUI ke satu atau beberapa alamat di jaringan SUI.</p>
+          <h1 className="text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-600 mb-4 font-sans">{SYMBOLS.wallet} SUI Token Transfer Tool</h1>
+          <p className="text-gray-400 text-lg">Alat untuk mengirim token SUI ke satu atau beberapa alamat di jaringan SUI.</p>
         </header>
 
-        <div className="bg-gray-800 rounded-lg shadow-xl p-6">
-          <h2 className="text-2xl font-semibold mb-4">1. Hubungkan Dompet Anda</h2>
+        <div className="bg-gray-800/50 backdrop-blur-sm rounded-lg shadow-neon-blue p-6 border border-blue-500/20">
+          <h2 className="text-2xl font-bold text-blue-400 mb-4">1. Hubungkan Dompet Anda</h2>
           <div className="space-y-4">
             <div>
               <label htmlFor="keyInput" className="block text-sm font-medium text-gray-300 mb-2">
@@ -270,22 +270,22 @@ function App() {
                 onChange={(e) => setKeyInput(e.target.value)}
                 placeholder="Masukkan private key atau mnemonic Anda"
                 disabled={isLoading}
-                className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-md text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-4 py-2 bg-gray-700/50 border border-gray-600 rounded-md text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
               <p className="mt-2 text-sm text-gray-400">Contoh: suiprivkey..., 0x..., atau 12 kata mnemonic.</p>
             </div>
             <button
               onClick={handleConnectWallet}
               disabled={isLoading || !keyInput.trim()}
-              className="w-full py-2 px-4 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 text-white rounded-md transition-colors"
+              className="w-full py-2 px-4 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 disabled:from-gray-600 disabled:to-gray-600 text-white rounded-md transition-all duration-300 transform hover:scale-[1.02]"
             >
               {isLoading && keypair === null ? `${SYMBOLS.processing} Menghubungkan...` : 'Hubungkan Dompet'}
             </button>
             {address && keypair && (
-              <div className="mt-4 p-4 bg-gray-700 rounded-md">
-                <p className="text-green-400 mb-2">Status: Terhubung</p>
-                <p className="text-gray-300 break-all">Alamat: {address}</p>
-                <p className="text-gray-300">Saldo: {(Number(balance) / 1e9).toFixed(6)} SUI</p>
+              <div className="mt-4 p-4 bg-gray-700/30 rounded-md border border-gray-600/50">
+                <p className="text-green-400 mb-2 font-medium">Status: Terhubung</p>
+                <p className="text-gray-300 break-all font-mono">Alamat: {address}</p>
+                <p className="text-gray-300 font-medium">Saldo: {(Number(balance) / 1e9).toFixed(6)} SUI</p>
               </div>
             )}
             <p className="text-yellow-400 text-sm">
@@ -295,18 +295,18 @@ function App() {
         </div>
 
         {keypair && address && (
-          <div className="bg-gray-800 rounded-lg shadow-xl p-6">
-            <h2 className="text-2xl font-semibold mb-4">2. Konfigurasi Transfer SUI</h2>
+          <div className="bg-gray-800/50 backdrop-blur-sm rounded-lg shadow-neon-purple p-6 border border-purple-500/20">
+            <h2 className="text-2xl font-bold text-purple-400 mb-4">2. Konfigurasi Transfer SUI</h2>
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-300 mb-2">Mode Penerima:</label>
                 <div className="grid grid-cols-2 gap-4">
                   <button
                     onClick={() => setRecipientMode('single')}
-                    className={`py-2 px-4 rounded-md transition-colors ${
+                    className={`py-2 px-4 rounded-md transition-all duration-300 ${
                       recipientMode === 'single'
-                        ? 'bg-blue-600 text-white'
-                        : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                        ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-neon-blue'
+                        : 'bg-gray-700/50 text-gray-300 hover:bg-gray-600/50'
                     }`}
                     disabled={isLoading}
                   >
@@ -314,10 +314,10 @@ function App() {
                   </button>
                   <button
                     onClick={() => setRecipientMode('multiple')}
-                    className={`py-2 px-4 rounded-md transition-colors ${
+                    className={`py-2 px-4 rounded-md transition-all duration-300 ${
                       recipientMode === 'multiple'
-                        ? 'bg-blue-600 text-white'
-                        : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                        ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-neon-blue'
+                        : 'bg-gray-700/50 text-gray-300 hover:bg-gray-600/50'
                     }`}
                     disabled={isLoading}
                   >
@@ -341,7 +341,7 @@ function App() {
                       : '0xAlamatPenerima1\n0xAlamatPenerima2\n0xAlamatPenerima3'
                   }
                   disabled={isLoading}
-                  className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-md text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-4 py-2 bg-gray-700/50 border border-gray-600 rounded-md text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent font-mono"
                 />
               </div>
 
@@ -356,7 +356,7 @@ function App() {
                   onChange={(e) => setAmount(e.target.value)}
                   placeholder="Contoh: 0.5"
                   disabled={isLoading}
-                  className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-md text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-4 py-2 bg-gray-700/50 border border-gray-600 rounded-md text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                   step="0.000001"
                   min="0.000001"
                 />
@@ -365,7 +365,7 @@ function App() {
               <button
                 onClick={handleTransferSui}
                 disabled={isLoading || !recipients.trim() || !amount.trim() || parseFloat(amount) <= 0}
-                className="w-full py-3 px-4 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 text-white rounded-md transition-colors text-lg font-semibold"
+                className="w-full py-3 px-4 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 disabled:from-gray-600 disabled:to-gray-600 text-white rounded-md transition-all duration-300 transform hover:scale-[1.02] text-lg font-semibold"
               >
                 {isLoading ? `${SYMBOLS.processing} Mengirim SUI...` : 'Kirim SUI Sekarang'}
               </button>
@@ -374,25 +374,25 @@ function App() {
         )}
 
         {logs.length > 0 && (
-          <div className="bg-gray-800 rounded-lg shadow-xl p-6">
-            <h2 className="text-2xl font-semibold mb-4">{SYMBOLS.info} Log Aktivitas</h2>
+          <div className="bg-gray-800/50 backdrop-blur-sm rounded-lg shadow-neon-blue p-6 border border-blue-500/20">
+            <h2 className="text-2xl font-bold text-blue-400 mb-4">{SYMBOLS.info} Log Aktivitas</h2>
             <div className="space-y-2 max-h-96 overflow-y-auto">
               {logs.map((logEntry) => (
                 <div
                   key={logEntry.id}
-                  className={`p-3 rounded-md ${
+                  className={`p-3 rounded-md backdrop-blur-sm ${
                     logEntry.type === 'success'
-                      ? 'bg-green-900/50 text-green-400'
+                      ? 'bg-green-900/30 text-green-400 border border-green-500/20'
                       : logEntry.type === 'error'
-                      ? 'bg-red-900/50 text-red-400'
+                      ? 'bg-red-900/30 text-red-400 border border-red-500/20'
                       : logEntry.type === 'warning'
-                      ? 'bg-yellow-900/50 text-yellow-400'
-                      : 'bg-gray-700 text-gray-300'
+                      ? 'bg-yellow-900/30 text-yellow-400 border border-yellow-500/20'
+                      : 'bg-gray-700/30 text-gray-300 border border-gray-600/20'
                   }`}
                 >
                   <div className="flex items-start gap-2">
                     <span>{SYMBOLS[logEntry.type]}</span>
-                    <span className="flex-1">{logEntry.message}</span>
+                    <span className="flex-1 font-medium">{logEntry.message}</span>
                     <span className="text-xs text-gray-400">
                       {logEntry.timestamp.toLocaleTimeString()}
                     </span>
@@ -409,17 +409,17 @@ function App() {
               href="https://x.com/XBerryAO"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-gray-400 hover:text-blue-400 transition-colors"
+              className="text-gray-400 hover:text-blue-400 transition-colors duration-300"
             >
-               Twitter
+              𝕏 Twitter
             </a>
             <a
               href="https://t.me/dlzvy"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-gray-400 hover:text-blue-400 transition-colors"
+              className="text-gray-400 hover:text-blue-400 transition-colors duration-300"
             >
-               Telegram
+              ✈️ Telegram
             </a>
           </div>
         </footer>

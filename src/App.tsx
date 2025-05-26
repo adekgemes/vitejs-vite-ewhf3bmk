@@ -1,14 +1,9 @@
-// File: src/App.tsx
 import React, { useState, useMemo, useCallback, useEffect } from 'react';
 import { Ed25519Keypair } from '@mysten/sui.js/keypairs/ed25519';
 import { getFullnodeUrl, SuiClient } from '@mysten/sui.js/client';
 import { TransactionBlock } from '@mysten/sui.js/transactions';
 import { decodeSuiPrivateKey } from '@mysten/sui.js/cryptography';
-// import { Buffer } from 'buffer'; // Mungkin tidak lagi diperlukan jika vite-plugin-node-polyfills bekerja
-// Namun, tidak masalah jika tetap ada.
-import './App.css'; // Pastikan file CSS ini ada dan path-nya benar
 
-// Konfigurasi RPC, menggunakan Testnet sebagai default
 const SUI_RPC_URL = getFullnodeUrl('testnet');
 const suiClient = new SuiClient({ url: SUI_RPC_URL });
 
@@ -34,17 +29,11 @@ function App() {
   const [balance, setBalance] = useState<bigint | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [logs, setLogs] = useState<LogEntry[]>([]);
-
-  const [recipientMode, setRecipientMode] = useState<'single' | 'multiple'>(
-    'single'
-  );
+  const [recipientMode, setRecipientMode] = useState<'single' | 'multiple'>('single');
   const [recipients, setRecipients] = useState('');
   const [amount, setAmount] = useState('');
 
-  const address = useMemo(
-    () => keypair?.getPublicKey().toSuiAddress(),
-    [keypair]
-  );
+  const address = useMemo(() => keypair?.getPublicKey().toSuiAddress(), [keypair]);
 
   const log = useCallback((type: LogEntry['type'], message: string) => {
     setLogs((prev) => [
@@ -54,12 +43,10 @@ function App() {
   }, []);
 
   const initializeKeypairFromString = (input: string): Ed25519Keypair => {
-    // Coba format suiprivkey (encoded)
     if (input.startsWith('suiprivkey')) {
       const { secretKey } = decodeSuiPrivateKey(input);
       return Ed25519Keypair.fromSecretKey(secretKey);
     }
-    // Coba format hex (32 byte / 64 char)
     if (
       (input.startsWith('0x') && input.length === 66) ||
       (!input.startsWith('0x') &&
@@ -74,7 +61,6 @@ function App() {
         return Ed25519Keypair.fromSecretKey(privateKeyBytes);
       }
     }
-    // Coba format base64 (32 byte / 44 char)
     if (/^[A-Za-z0-9+/=]{44}$/.test(input)) {
       const privateKeyBytes = Buffer.from(input, 'base64');
       if (privateKeyBytes.length === 32) {
@@ -118,7 +104,7 @@ function App() {
       );
     } catch (error: any) {
       log('error', `Gagal menghubungkan dompet: ${error.message}`);
-      console.error('Connection error details:', error); // Tambahkan log error detail ke konsol
+      console.error('Connection error details:', error);
       setKeypair(null);
       setBalance(null);
     } finally {
@@ -218,7 +204,7 @@ function App() {
         }
       } catch (error: any) {
         log('error', `Gagal mengirim ke ${recipientAddress}: ${error.message}`);
-        console.error(`Transfer error to ${recipientAddress}:`, error); // Tambahkan log error detail
+        console.error(`Transfer error to ${recipientAddress}:`, error);
       }
       if (i < recipientArray.length - 1) {
         await new Promise((resolve) => setTimeout(resolve, 1500));
@@ -247,7 +233,7 @@ function App() {
       );
     } catch (error: any) {
       log('error', `Gagal memperbarui saldo: ${error.message}`);
-      console.error('Balance update error:', error); // Tambahkan log error detail
+      console.error('Balance update error:', error);
     }
 
     setIsLoading(false);
@@ -258,175 +244,169 @@ function App() {
     setBalance(null);
   }, [keyInput]);
 
-  // Tambahkan console.log sederhana untuk memastikan App.tsx dijalankan
   useEffect(() => {
     console.log('App component mounted and running.');
   }, []);
 
   return (
-    <div className="sui-transfer-app">
-      <header className="app-header">
-        <h1>{SYMBOLS.wallet} SUI Token Transfer Tool</h1>
-        <p>
-          Alat untuk mengirim token SUI ke satu atau beberapa alamat di jaringan
-          SUI.
-        </p>
-      </header>
+    <div className="min-h-screen bg-gray-900 py-8 px-4">
+      <div className="max-w-3xl mx-auto space-y-8">
+        <header className="text-center">
+          <h1 className="text-4xl font-bold text-blue-400 mb-4">{SYMBOLS.wallet} SUI Token Transfer Tool</h1>
+          <p className="text-gray-400">Alat untuk mengirim token SUI ke satu atau beberapa alamat di jaringan SUI.</p>
+        </header>
 
-      <section className="card">
-        <h2>1. Hubungkan Dompet Anda</h2>
-        <div className="form-group">
-          <label htmlFor="keyInput">
-            Private Key (suiprivkey, hex, base64) atau Mnemonic Phrase:
-          </label>
-          <input
-            type="password"
-            id="keyInput"
-            value={keyInput}
-            onChange={(e) => setKeyInput(e.target.value)}
-            placeholder="Masukkan private key atau mnemonic Anda"
-            disabled={isLoading}
-            className="input-field"
-          />
-          <small className="input-hint">
-            Contoh: suiprivkey..., 0x..., atau 12 kata mnemonic.
-          </small>
-        </div>
-        <button
-          onClick={handleConnectWallet}
-          disabled={isLoading || !keyInput.trim()}
-          className="button primary-button"
-        >
-          {isLoading && keypair === null
-            ? `${SYMBOLS.processing} Menghubungkan...`
-            : 'Hubungkan Dompet'}
-        </button>
-        {address && keypair && (
-          <div className="wallet-details">
-            <p>
-              <strong>Status:</strong>{' '}
-              <span className="status-connected">Terhubung</span>
-            </p>
-            <p>
-              <strong>Alamat:</strong>{' '}
-              <span className="address-display">{address}</span>
-            </p>
-            <p>
-              <strong>Saldo:</strong>{' '}
-              <span className="balance-display">
-                {(Number(balance) / 1e9).toFixed(6)} SUI
-              </span>
+        <div className="bg-gray-800 rounded-lg shadow-xl p-6">
+          <h2 className="text-2xl font-semibold mb-4">1. Hubungkan Dompet Anda</h2>
+          <div className="space-y-4">
+            <div>
+              <label htmlFor="keyInput" className="block text-sm font-medium text-gray-300 mb-2">
+                Private Key (suiprivkey, hex, base64) atau Mnemonic Phrase:
+              </label>
+              <input
+                type="password"
+                id="keyInput"
+                value={keyInput}
+                onChange={(e) => setKeyInput(e.target.value)}
+                placeholder="Masukkan private key atau mnemonic Anda"
+                disabled={isLoading}
+                className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-md text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+              <p className="mt-2 text-sm text-gray-400">Contoh: suiprivkey..., 0x..., atau 12 kata mnemonic.</p>
+            </div>
+            <button
+              onClick={handleConnectWallet}
+              disabled={isLoading || !keyInput.trim()}
+              className="w-full py-2 px-4 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 text-white rounded-md transition-colors"
+            >
+              {isLoading && keypair === null ? `${SYMBOLS.processing} Menghubungkan...` : 'Hubungkan Dompet'}
+            </button>
+            {address && keypair && (
+              <div className="mt-4 p-4 bg-gray-700 rounded-md">
+                <p className="text-green-400 mb-2">Status: Terhubung</p>
+                <p className="text-gray-300 break-all">Alamat: {address}</p>
+                <p className="text-gray-300">Saldo: {(Number(balance) / 1e9).toFixed(6)} SUI</p>
+              </div>
+            )}
+            <p className="text-yellow-400 text-sm">
+              {SYMBOLS.warning} JANGAN PERNAH membagikan private key atau mnemonic Anda. Gunakan dengan risiko Anda sendiri.
             </p>
           </div>
-        )}
-        <p className="warning-text">
-          {SYMBOLS.warning} JANGAN PERNAH membagikan private key atau mnemonic
-          Anda. Gunakan dengan risiko Anda sendiri.
-        </p>
-      </section>
+        </div>
 
-      {keypair && address && (
-        <section className="card">
-          <h2>2. Konfigurasi Transfer SUI</h2>
-          <div className="form-group">
-            <label>Mode Penerima:</label>
-            <div className="recipient-mode-selector">
+        {keypair && address && (
+          <div className="bg-gray-800 rounded-lg shadow-xl p-6">
+            <h2 className="text-2xl font-semibold mb-4">2. Konfigurasi Transfer SUI</h2>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-2">Mode Penerima:</label>
+                <div className="grid grid-cols-2 gap-4">
+                  <button
+                    onClick={() => setRecipientMode('single')}
+                    className={`py-2 px-4 rounded-md transition-colors ${
+                      recipientMode === 'single'
+                        ? 'bg-blue-600 text-white'
+                        : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                    }`}
+                    disabled={isLoading}
+                  >
+                    Penerima Tunggal
+                  </button>
+                  <button
+                    onClick={() => setRecipientMode('multiple')}
+                    className={`py-2 px-4 rounded-md transition-colors ${
+                      recipientMode === 'multiple'
+                        ? 'bg-blue-600 text-white'
+                        : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                    }`}
+                    disabled={isLoading}
+                  >
+                    Beberapa Penerima
+                  </button>
+                </div>
+              </div>
+
+              <div>
+                <label htmlFor="recipients" className="block text-sm font-medium text-gray-300 mb-2">
+                  {recipientMode === 'single' ? 'Alamat Penerima Tunggal:' : 'Daftar Alamat Penerima (satu alamat per baris):'}
+                </label>
+                <textarea
+                  id="recipients"
+                  rows={recipientMode === 'single' ? 1 : 5}
+                  value={recipients}
+                  onChange={(e) => setRecipients(e.target.value)}
+                  placeholder={
+                    recipientMode === 'single'
+                      ? 'Masukkan alamat SUI (0x...)'
+                      : '0xAlamatPenerima1\n0xAlamatPenerima2\n0xAlamatPenerima3'
+                  }
+                  disabled={isLoading}
+                  className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-md text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+
+              <div>
+                <label htmlFor="amount" className="block text-sm font-medium text-gray-300 mb-2">
+                  Jumlah SUI per Penerima:
+                </label>
+                <input
+                  type="number"
+                  id="amount"
+                  value={amount}
+                  onChange={(e) => setAmount(e.target.value)}
+                  placeholder="Contoh: 0.5"
+                  disabled={isLoading}
+                  className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-md text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  step="0.000001"
+                  min="0.000001"
+                />
+              </div>
+
               <button
-                onClick={() => setRecipientMode('single')}
-                className={`button mode-button ${
-                  recipientMode === 'single' ? 'active' : ''
-                }`}
-                disabled={isLoading}
+                onClick={handleTransferSui}
+                disabled={isLoading || !recipients.trim() || !amount.trim() || parseFloat(amount) <= 0}
+                className="w-full py-3 px-4 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 text-white rounded-md transition-colors text-lg font-semibold"
               >
-                Penerima Tunggal
-              </button>
-              <button
-                onClick={() => setRecipientMode('multiple')}
-                className={`button mode-button ${
-                  recipientMode === 'multiple' ? 'active' : ''
-                }`}
-                disabled={isLoading}
-              >
-                Beberapa Penerima
+                {isLoading ? `${SYMBOLS.processing} Mengirim SUI...` : 'Kirim SUI Sekarang'}
               </button>
             </div>
           </div>
-          <div className="form-group">
-            <label htmlFor="recipients">
-              {recipientMode === 'single'
-                ? 'Alamat Penerima Tunggal:'
-                : 'Daftar Alamat Penerima (satu alamat per baris):'}
-            </label>
-            <textarea
-              id="recipients"
-              rows={recipientMode === 'single' ? 1 : 5}
-              value={recipients}
-              onChange={(e) => setRecipients(e.target.value)}
-              placeholder={
-                recipientMode === 'single'
-                  ? 'Masukkan alamat SUI (0x...)'
-                  : '0xAlamatPenerima1\n0xAlamatPenerima2\n0xAlamatPenerima3'
-              }
-              disabled={isLoading}
-              className="input-field textarea-field"
-            />
-          </div>
-          <div className="form-group">
-            <label htmlFor="amount">Jumlah SUI per Penerima:</label>
-            <input
-              type="number"
-              id="amount"
-              value={amount}
-              onChange={(e) => setAmount(e.target.value)}
-              placeholder="Contoh: 0.5"
-              disabled={isLoading}
-              className="input-field"
-              step="0.000001"
-              min="0.000001"
-            />
-          </div>
-          <button
-            onClick={handleTransferSui}
-            disabled={
-              isLoading ||
-              !recipients.trim() ||
-              !amount.trim() ||
-              parseFloat(amount) <= 0
-            }
-            className="button primary-button large-button"
-          >
-            {isLoading
-              ? `${SYMBOLS.processing} Mengirim SUI...`
-              : 'Kirim SUI Sekarang'}
-          </button>
-        </section>
-      )}
+        )}
 
-      {logs.length > 0 && (
-        <section className="card">
-          <h2>{SYMBOLS.info} Log Aktivitas</h2>
-          <div className="logs-container">
-            {logs.map((logEntry) => (
-              <div
-                key={logEntry.id}
-                className={`log-entry log-${logEntry.type}`}
-              >
-                <span className="log-icon">{SYMBOLS[logEntry.type]}</span>
-                <span className="log-message">{logEntry.message}</span>
-                <span className="log-timestamp">
-                  {logEntry.timestamp.toLocaleTimeString()}
-                </span>
-              </div>
-            ))}
+        {logs.length > 0 && (
+          <div className="bg-gray-800 rounded-lg shadow-xl p-6">
+            <h2 className="text-2xl font-semibold mb-4">{SYMBOLS.info} Log Aktivitas</h2>
+            <div className="space-y-2 max-h-96 overflow-y-auto">
+              {logs.map((logEntry) => (
+                <div
+                  key={logEntry.id}
+                  className={`p-3 rounded-md ${
+                    logEntry.type === 'success'
+                      ? 'bg-green-900/50 text-green-400'
+                      : logEntry.type === 'error'
+                      ? 'bg-red-900/50 text-red-400'
+                      : logEntry.type === 'warning'
+                      ? 'bg-yellow-900/50 text-yellow-400'
+                      : 'bg-gray-700 text-gray-300'
+                  }`}
+                >
+                  <div className="flex items-start gap-2">
+                    <span>{SYMBOLS[logEntry.type]}</span>
+                    <span className="flex-1">{logEntry.message}</span>
+                    <span className="text-xs text-gray-400">
+                      {logEntry.timestamp.toLocaleTimeString()}
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
-        </section>
-      )}
-      <footer className="app-footer">
-        <p>
-          Dibangun dengan React & Sui.js. Selalu berhati-hati saat menangani
-          private key.
-        </p>
-      </footer>
+        )}
+
+        <footer className="text-center text-gray-400 text-sm">
+          <p>Dibangun dengan React & Sui.js. Selalu berhati-hati saat menangani private key.</p>
+        </footer>
+      </div>
     </div>
   );
 }

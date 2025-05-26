@@ -4,6 +4,11 @@ import { getFullnodeUrl, SuiClient } from '@mysten/sui.js/client';
 import { TransactionBlock } from '@mysten/sui.js/transactions';
 import { decodeSuiPrivateKey } from '@mysten/sui.js/cryptography';
 
+// Ensure Buffer is available
+if (typeof window !== 'undefined') {
+  window.Buffer = window.Buffer || require('buffer').Buffer;
+}
+
 const SUI_RPC_URL = getFullnodeUrl('testnet');
 const suiClient = new SuiClient({ url: SUI_RPC_URL });
 
@@ -21,6 +26,16 @@ interface LogEntry {
   type: 'info' | 'success' | 'error' | 'processing' | 'warning';
   message: string;
   timestamp: Date;
+}
+
+function formatBalance(balance: bigint | null): string {
+  if (balance === null) return '0.000000';
+  try {
+    return (Number(balance) / 1e9).toFixed(6);
+  } catch (error) {
+    console.error('Error formatting balance:', error);
+    return '0.000000';
+  }
 }
 
 function App() {
@@ -93,14 +108,16 @@ function App() {
         owner: addr,
         coinType: '0x2::sui::SUI',
       });
+      
       const totalBalance = coinBalance.data.reduce(
         (sum, coin) => sum + BigInt(coin.balance),
         BigInt(0)
       );
+      
       setBalance(totalBalance);
       log(
         'info',
-        `Saldo saat ini: ${(Number(totalBalance) / 1e9).toFixed(6)} SUI`
+        `Saldo saat ini: ${formatBalance(totalBalance)} SUI`
       );
     } catch (error: any) {
       log('error', `Gagal menghubungkan dompet: ${error.message}`);
@@ -150,9 +167,7 @@ function App() {
     if (totalAmountToSend > balance) {
       log(
         'error',
-        `Saldo tidak mencukupi. Dibutuhkan: ${(
-          Number(totalAmountToSend) / 1e9
-        ).toFixed(6)} SUI, Tersedia: ${(Number(balance) / 1e9).toFixed(6)} SUI.`
+        `Saldo tidak mencukupi. Dibutuhkan: ${formatBalance(totalAmountToSend)} SUI, Tersedia: ${formatBalance(balance)} SUI.`
       );
       return;
     }
@@ -229,7 +244,7 @@ function App() {
       setBalance(totalNewBalance);
       log(
         'info',
-        `Saldo baru: ${(Number(totalNewBalance) / 1e9).toFixed(6)} SUI`
+        `Saldo baru: ${formatBalance(totalNewBalance)} SUI`
       );
     } catch (error: any) {
       log('error', `Gagal memperbarui saldo: ${error.message}`);
@@ -252,8 +267,12 @@ function App() {
     <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black py-8 px-4">
       <div className="max-w-3xl mx-auto space-y-8">
         <header className="text-center">
-          <h1 className="text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-600 mb-4 font-sans"> SUI Token Transfer Tool</h1>
-          <p className="text-gray-400 text-lg">Alat untuk mengirim token SUI ke satu atau beberapa alamat di jaringan SUI.</p>
+          <h1 className="text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-600 mb-4 font-sans">
+            SUI Token Transfer Tool
+          </h1>
+          <p className="text-gray-400 text-lg">
+            Alat untuk mengirim token SUI ke satu atau beberapa alamat di jaringan SUI.
+          </p>
         </header>
 
         <div className="bg-gray-800/50 backdrop-blur-sm rounded-lg shadow-neon-blue p-6 border border-blue-500/20">
@@ -272,7 +291,9 @@ function App() {
                 disabled={isLoading}
                 className="w-full px-4 py-2 bg-gray-700/50 border border-gray-600 rounded-md text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
-              <p className="mt-2 text-sm text-gray-400">Contoh: suiprivkey..., 0x..., atau 12 kata mnemonic.</p>
+              <p className="mt-2 text-sm text-gray-400">
+                Contoh: suiprivkey..., 0x..., atau 12 kata mnemonic.
+              </p>
             </div>
             <button
               onClick={handleConnectWallet}
@@ -285,7 +306,7 @@ function App() {
               <div className="mt-4 p-4 bg-gray-700/30 rounded-md border border-gray-600/50">
                 <p className="text-green-400 mb-2 font-medium">Status: Terhubung</p>
                 <p className="text-gray-300 break-all font-mono">Alamat: {address}</p>
-                <p className="text-gray-300 font-medium">Saldo: {(Number(balance) / 1e9).toFixed(6)} SUI</p>
+                <p className="text-gray-300 font-medium">Saldo: {formatBalance(balance)} SUI</p>
               </div>
             )}
             <p className="text-yellow-400 text-sm">

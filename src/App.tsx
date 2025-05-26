@@ -403,8 +403,25 @@ function App() {
           </div>
         )}
 
-        <footer className="text-center text-gray-400 text-sm">
-          <p>Dibangun dengan React & Sui.js. Selalu berhati-hati saat menangani private key.</p>
+        <footer className="text-center space-y-4">
+          <div className="flex justify-center space-x-6">
+            <a
+              href="https://twitter.com/your_twitter"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-gray-400 hover:text-blue-400 transition-colors"
+            >
+              𝕏 Twitter
+            </a>
+            <a
+              href="https://t.me/your_telegram"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-gray-400 hover:text-blue-400 transition-colors"
+            >
+              ✈️ Telegram
+            </a>
+          </div>
         </footer>
       </div>
     </div>

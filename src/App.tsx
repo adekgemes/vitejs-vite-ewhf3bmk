@@ -406,20 +406,20 @@ function App() {
         <footer className="text-center space-y-4">
           <div className="flex justify-center space-x-6">
             <a
-              href="https://twitter.com/your_twitter"
+              href="https://x.com/XBerryAO"
               target="_blank"
               rel="noopener noreferrer"
               className="text-gray-400 hover:text-blue-400 transition-colors"
             >
-              𝕏 Twitter
+               Twitter
             </a>
             <a
-              href="https://t.me/your_telegram"
+              href="https://t.me/dlzvy"
               target="_blank"
               rel="noopener noreferrer"
               className="text-gray-400 hover:text-blue-400 transition-colors"
             >
-              ✈️ Telegram
+               Telegram
             </a>
           </div>
         </footer>
